@@ -33,6 +33,31 @@ app.get("/api/notes", (req,res) => {
   });
 });
 
+app.post('/api/notes', (req,res) => {
+  const {title, text} =req.body;
+  const note = {title, text };
+
+  fs.readFile(dbFile, "utf8", (error, data) => {
+    if(error) console.log("Error, file not read", error);
+
+    let notes = [];
+    if (data) notes = JSON.parse(data);
+
+    notes.unshit(note);
+
+    fs.writeFile(dbFile, JSON.stringify(notes), (error) => { if (error) {
+      console.log("Note not added", error);
+      res.status(500).json("Note not added");
+    } else {
+    console.log("Your note has beed added", note);
+    res.status(200).send(JSON.stringify(note));
+    }
+  });
+});
+});
+
+app.get("*", (req, res) => res.send("url requested does not exist or does not have a pathway in this app."));
+
 
 
 //set up local port
